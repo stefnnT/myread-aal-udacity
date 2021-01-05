@@ -10,6 +10,12 @@ class Search extends Component {
     error: null
   };
 
+  handleInputChange = e => {
+    if (!e.target.value) {
+      this.setState({ books: [] });
+    }
+  };
+
   handleSearch = e => {
     e.preventDefault();
     const search = seralizeForm(e.target, { hash: true });
@@ -67,6 +73,7 @@ class Search extends Component {
                 type="text"
                 name="search"
                 placeholder="Search by title or author"
+                onChange={this.handleInputChange}
               />
             </form>
           </div>
