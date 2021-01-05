@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 
 class Book extends Component {
-  handleShelfChange = () => {};
-
   render() {
-    const { book } = this.props;
+    const { book, handleShelfChange } = this.props;
     const { title, authors, imageLinks, shelf } = book;
 
     return (
@@ -21,7 +19,12 @@ class Book extends Component {
               }}
             />
             <div className="book-shelf-changer">
-              <select value={shelf} onChange={this.handleShelfChange}>
+              <select
+                value={shelf}
+                onChange={e => {
+                  handleShelfChange(book, e.target.value);
+                }}
+              >
                 <option value="move" disabled>
                   Move to...
                 </option>

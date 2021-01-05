@@ -23,6 +23,12 @@ class Shelf extends Component {
     });
   }
 
+  handleUpdateBookShelf = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => {
+      this.componentDidMount();
+    });
+  };
+
   render() {
     const { currentlyReading, wantToRead, read } = this.state;
 
@@ -33,9 +39,21 @@ class Shelf extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            <BookShelf books={currentlyReading} title="Currently Reading" />
-            <BookShelf books={wantToRead} title="Want to Read" />
-            <BookShelf books={read} title="Read" />
+            <BookShelf
+              books={currentlyReading}
+              title="Currently Reading"
+              updateBookShelf={this.handleUpdateBookShelf}
+            />
+            <BookShelf
+              books={wantToRead}
+              title="Want to Read"
+              updateBookShelf={this.handleUpdateBookShelf}
+            />
+            <BookShelf
+              books={read}
+              title="Read"
+              updateBookShelf={this.handleUpdateBookShelf}
+            />
           </div>
         </div>
         <Link to="/search" className="open-search">
