@@ -39,21 +39,27 @@ class Shelf extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            <BookShelf
-              books={currentlyReading}
-              title="Currently Reading"
-              updateBookShelf={this.handleUpdateBookShelf}
-            />
-            <BookShelf
-              books={wantToRead}
-              title="Want to Read"
-              updateBookShelf={this.handleUpdateBookShelf}
-            />
-            <BookShelf
-              books={read}
-              title="Read"
-              updateBookShelf={this.handleUpdateBookShelf}
-            />
+            {currentlyReading && currentlyReading.length > 0 && (
+              <BookShelf
+                books={currentlyReading}
+                title="Currently Reading"
+                updateBookShelf={this.handleUpdateBookShelf}
+              />
+            )}
+            {wantToRead && wantToRead.length > 0 && (
+              <BookShelf
+                books={wantToRead}
+                title="Want to Read"
+                updateBookShelf={this.handleUpdateBookShelf}
+              />
+            )}
+            {read && read.length > 0 && (
+              <BookShelf
+                books={read}
+                title="Read"
+                updateBookShelf={this.handleUpdateBookShelf}
+              />
+            )}
           </div>
         </div>
         <Link to="/search" className="open-search">
