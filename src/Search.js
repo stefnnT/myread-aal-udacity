@@ -12,20 +12,21 @@ class Search extends Component {
 
   handleInputChange = e => {
     if (!e.target.value) {
-      this.setState({ books: [], error: null });
+      this.setState(() => ({ books: [], error: null }));
     }
   };
 
   handleSearch = e => {
     e.preventDefault();
+    this._isMounted = true;
     // reset books state to default for cases where use pastes
     // search query on an highlighted previous query
-    this.setState({ books: [] });
+    this.setState(() => ({ books: [] }));
     const search = seralizeForm(e.target, { hash: true });
 
     BooksAPI.search(search.search).then(books => {
       if (books.error) {
-        this.setState({ books: [], error: books.error });
+        this.setState(() => ({ books: [], error: books.error }));
       } else {
         BooksAPI.getAll().then(shelvedBooks => {
           books.forEach(book => {
@@ -36,7 +37,7 @@ class Search extends Component {
             }));
           });
         });
-        this.setState({ error: null });
+        this.setState(() => ({ error: null }));
       }
     });
   };
@@ -53,6 +54,10 @@ class Search extends Component {
       }));
     });
   };
+
+  // componentWillUnmount() {
+
+  // }
 
   render() {
     const { books, error } = this.state;

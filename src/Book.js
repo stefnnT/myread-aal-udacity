@@ -9,7 +9,7 @@ class Book extends Component {
   render() {
     const { book } = this.props;
     const { title, authors, imageLinks, shelf } = book;
-    if (!book.imageLinks) return;
+    if (!book.imageLinks) return null;
 
     return (
       // <li>{JSON.stringify(book)}</li>

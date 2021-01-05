@@ -12,14 +12,11 @@ class Shelf extends Component {
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-      console.log(books);
       this.setState(() => ({
         currentlyReading: books.filter(obj => obj.shelf === "currentlyReading"),
         wantToRead: books.filter(obj => obj.shelf === "wantToRead"),
         read: books.filter(obj => obj.shelf === "read")
       }));
-
-      console.log(this.state.read);
     });
   }
 
@@ -63,9 +60,7 @@ class Shelf extends Component {
           </div>
         </div>
         <Link to="/search" className="open-search">
-          <button onClick={() => this.setState({ showSearchPage: true })}>
-            Add a book
-          </button>
+          <button>Add a book</button>
         </Link>
       </div>
     );
