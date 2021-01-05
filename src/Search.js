@@ -12,12 +12,15 @@ class Search extends Component {
 
   handleInputChange = e => {
     if (!e.target.value) {
-      this.setState({ books: [] });
+      this.setState({ books: [], error: null });
     }
   };
 
   handleSearch = e => {
     e.preventDefault();
+    // reset books state to default for cases where use pastes
+    // search query on an highlighted previous query
+    this.setState({ books: [] });
     const search = seralizeForm(e.target, { hash: true });
 
     BooksAPI.search(search.search).then(books => {
@@ -80,9 +83,9 @@ class Search extends Component {
         </div>
         <div className="search-books-results">
           {error && (
-            <div style={{ color: "red", textAlign: "center" }}>
-              Error: {` ${error}`}
-            </div>
+            <h2 style={{ color: "red", textAlign: "center" }}>
+              Error: Invalid query string
+            </h2>
           )}
           <ol className="books-grid">
             {books.map(book => (
