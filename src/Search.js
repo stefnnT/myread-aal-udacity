@@ -1,34 +1,50 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
-import seralizeForm from "form-serialize";
 import Book from "./Book";
 
 class Search extends Component {
+  // Remove error state; use toast to display error messages instead
   state = {
     books: [],
+    query: "",
+    loading: false,
     error: null
   };
 
   handleInputChange = e => {
-    if (!e.target.value) {
-      this.setState(() => ({ books: [], error: null }));
-    }
+    const query = e.target.value;
+    this.setState(() => ({ query }));
+    clearTimeout();
+    setTimeout(() => this.handleSearch(), 1000);
   };
 
-  handleSearch = e => {
+  handleFormSubmit = e => {
     e.preventDefault();
-    this._isMounted = true;
+    // add toast for when form is submitted without a query string
+
+    this.handleSearch();
+  };
+
+  handleSearch = async () => {
+    const { query } = this.state;
     // reset books state to default for cases where use pastes
     // search query on an highlighted previous query
-    this.setState(() => ({ books: [] }));
-    const search = seralizeForm(e.target, { hash: true });
+    this.setState(() => ({ books: [], loading: true }));
 
-    BooksAPI.search(search.search).then(books => {
+    if (!query) {
+      return;
+    }
+
+    await BooksAPI.search(query).then(async books => {
       if (books.error) {
-        this.setState(() => ({ books: [], error: books.error }));
+        this.setState(() => ({
+          books: [],
+          error: "invalid query string",
+          loading: false
+        }));
       } else {
-        BooksAPI.getAll().then(shelvedBooks => {
+        await BooksAPI.getAll().then(shelvedBooks => {
           books.forEach(book => {
             const shelved = shelvedBooks.find(el => el.id === book.id);
             book.shelf = shelved ? shelved.shelf : "none";
@@ -37,7 +53,7 @@ class Search extends Component {
             }));
           });
         });
-        this.setState(() => ({ error: null }));
+        this.setState(() => ({ error: null, loading: false }));
       }
     });
   };
@@ -54,10 +70,6 @@ class Search extends Component {
       }));
     });
   };
-
-  // componentWillUnmount() {
-
-  // }
 
   render() {
     const { books, error } = this.state;
@@ -76,7 +88,7 @@ class Search extends Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-            <form onSubmit={this.handleSearch}>
+            <form onSubmit={this.handleFormSubmit}>
               <input
                 type="text"
                 name="search"
@@ -89,7 +101,7 @@ class Search extends Component {
         <div className="search-books-results">
           {error && (
             <h2 style={{ color: "red", textAlign: "center" }}>
-              Error: Invalid query string
+              Error: {error}
             </h2>
           )}
           <ol className="books-grid">
