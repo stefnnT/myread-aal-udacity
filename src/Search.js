@@ -13,7 +13,7 @@ class Search extends Component {
     error: null
   };
 
-  handleInputChange = debounce(e => this.handleSearch(), 1500);
+  handleInputChange = debounce(e => this.handleSearch(), 1000);
 
   setInputState = e => {
     const query = e.target.value;
@@ -27,8 +27,9 @@ class Search extends Component {
     this.handleSearch();
   };
 
-  handleSearch = () => {
-    const { query } = this.state;
+  handleSearch = async () => {
+    let { query } = this.state;
+    query = query.trim();
 
     // reset books state to default for cases where use pastes
     // search query on an highlighted previous query
@@ -37,8 +38,9 @@ class Search extends Component {
     if (!query) {
       return;
     }
+    try {
+      const books = await BooksAPI.search(query);
 
-    BooksAPI.search(query).then(books => {
       if (books.error) {
         this.setState(() => ({
           books: [],
@@ -46,22 +48,25 @@ class Search extends Component {
           loading: false
         }));
       } else {
-        BooksAPI.getAll().then(shelvedBooks => {
-          books.forEach(book => {
-            const shelved = shelvedBooks.find(el => el.id === book.id);
-            book.shelf = shelved ? shelved.shelf : "none";
-            this.setState(currentState => ({
-              books: currentState.books.concat([book])
-            }));
-          });
+        const shelvedBooks = await BooksAPI.getAll();
+        books.forEach(book => {
+          const shelved = shelvedBooks.find(el => el.id === book.id);
+          book.shelf = shelved ? shelved.shelf : "none";
+          this.setState(currentState => ({
+            books: currentState.books.concat([book])
+          }));
         });
         this.setState(() => ({ error: null, loading: false }));
       }
-    });
+    } catch (error) {
+      this.setState(() => ({ error: "Error connecting to API" }));
+    }
   };
 
-  handleShelfChange = (book, shelf) => {
-    BooksAPI.update(book, shelf).then(() => {
+  handleShelfChange = async (book, shelf) => {
+    try {
+      await BooksAPI.update(book, shelf);
+
       this.setState(currentState => ({
         books: currentState.books.map(el => {
           if (el.id === book.id) {
@@ -70,7 +75,9 @@ class Search extends Component {
           return el;
         })
       }));
-    });
+    } catch (error) {
+      this.setState(() => ({ error: "Error connecting to API" }));
+    }
   };
 
   render() {

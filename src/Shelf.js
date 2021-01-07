@@ -9,12 +9,14 @@ class Shelf extends Component {
       { id: "currentlyReading", title: "Currently Reading", books: [] },
       { id: "wantToRead", title: "Want to Read", books: [] },
       { id: "read", title: "Read", books: [] }
-    ]
+    ],
+    error: null
   };
 
-  componentDidMount() {
-    BooksAPI.getAll().then(books => {
-      // create state object holder
+  async componentDidMount() {
+    try {
+      const books = await BooksAPI.getAll();
+
       const shelves = this.state.shelves.map(shelf => ({
         ...shelf,
         books: books.filter(obj => obj.shelf === shelf.id)
@@ -22,15 +24,25 @@ class Shelf extends Component {
 
       this.setState(currentState => ({
         ...currentState,
-        shelves
+        shelves,
+        error: null
       }));
-    });
+    } catch (error) {
+      this.setState(() => ({
+        error: "Error connecting to API"
+      }));
+    }
   }
 
-  handleUpdateBookShelf = (book, shelf) => {
-    BooksAPI.update(book, shelf).then(() => {
+  handleUpdateBookShelf = async (book, shelf) => {
+    try {
+      await BooksAPI.update(book, shelf);
       this.componentDidMount();
-    });
+    } catch (error) {
+      this.setState(() => ({
+        error: "Error connecting to API"
+      }));
+    }
   };
 
   render() {
