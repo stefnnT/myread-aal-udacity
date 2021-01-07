@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
+import debounce from "./Debounce";
 
 class Search extends Component {
   // Remove error state; use toast to display error messages instead
@@ -12,11 +13,11 @@ class Search extends Component {
     error: null
   };
 
-  handleInputChange = e => {
+  handleInputChange = debounce(e => this.handleSearch(), 1500);
+
+  setInputState = e => {
     const query = e.target.value;
     this.setState(() => ({ query }));
-    clearTimeout();
-    setTimeout(() => this.handleSearch(), 1000);
   };
 
   handleFormSubmit = e => {
@@ -26,8 +27,9 @@ class Search extends Component {
     this.handleSearch();
   };
 
-  handleSearch = async () => {
+  handleSearch = () => {
     const { query } = this.state;
+
     // reset books state to default for cases where use pastes
     // search query on an highlighted previous query
     this.setState(() => ({ books: [], loading: true }));
@@ -36,7 +38,7 @@ class Search extends Component {
       return;
     }
 
-    await BooksAPI.search(query).then(async books => {
+    BooksAPI.search(query).then(books => {
       if (books.error) {
         this.setState(() => ({
           books: [],
@@ -44,7 +46,7 @@ class Search extends Component {
           loading: false
         }));
       } else {
-        await BooksAPI.getAll().then(shelvedBooks => {
+        BooksAPI.getAll().then(shelvedBooks => {
           books.forEach(book => {
             const shelved = shelvedBooks.find(el => el.id === book.id);
             book.shelf = shelved ? shelved.shelf : "none";
@@ -93,7 +95,10 @@ class Search extends Component {
                 type="text"
                 name="search"
                 placeholder="Search by title or author"
-                onChange={this.handleInputChange}
+                onInput={e => {
+                  this.setInputState(e);
+                  this.handleInputChange(e);
+                }}
               />
             </form>
           </div>
