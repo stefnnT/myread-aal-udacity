@@ -1,10 +1,10 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 // import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 import Shelf from "./Shelf";
 import Search from "./Search";
-// import NotFound404 from "./NotFound404";
+import NotFound404 from "./NotFound404";
 
 class BooksApp extends React.Component {
   state = {
@@ -20,9 +20,11 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        {/* <Route component={NotFound404} /> */}
-        <Route exact path="/" component={Shelf} />
-        <Route exact path="/search" component={Search} />
+        <Switch>
+          <Route exact path="/" component={Shelf} />
+          <Route exact path="/search" component={Search} />
+          <Route path="*" component={NotFound404} />
+        </Switch>
       </div>
     );
   }
