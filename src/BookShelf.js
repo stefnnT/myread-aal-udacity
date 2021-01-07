@@ -2,7 +2,9 @@ import React from "react";
 import Book from "./Book";
 
 const BookShelf = props => {
-  const { books, title, updateBookShelf } = props;
+  // return "Yipee";
+  const { shelf, updateBookShelf } = props;
+  const { title, books } = shelf;
 
   const handleShelfChange = (book, shelf) => {
     updateBookShelf(book, shelf);

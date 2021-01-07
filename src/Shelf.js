@@ -5,17 +5,24 @@ import BookShelf from "./BookShelf";
 
 class Shelf extends Component {
   state = {
-    currentlyReading: [],
-    wantToRead: [],
-    read: []
+    shelves: [
+      { id: "currentlyReading", title: "Currently Reading", books: [] },
+      { id: "wantToRead", title: "Want to Read", books: [] },
+      { id: "read", title: "Read", books: [] }
+    ]
   };
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-      this.setState(() => ({
-        currentlyReading: books.filter(obj => obj.shelf === "currentlyReading"),
-        wantToRead: books.filter(obj => obj.shelf === "wantToRead"),
-        read: books.filter(obj => obj.shelf === "read")
+      // create state object holder
+      const shelves = this.state.shelves.map(shelf => ({
+        ...shelf,
+        books: books.filter(obj => obj.shelf === shelf.id)
+      }));
+
+      this.setState(currentState => ({
+        ...currentState,
+        shelves
       }));
     });
   }
@@ -27,7 +34,7 @@ class Shelf extends Component {
   };
 
   render() {
-    const { currentlyReading, wantToRead, read } = this.state;
+    const { shelves } = this.state;
 
     return (
       <div className="list-books">
@@ -36,27 +43,13 @@ class Shelf extends Component {
         </div>
         <div className="list-books-content">
           <div>
-            {currentlyReading && currentlyReading.length > 0 && (
+            {shelves.map(shelf => (
               <BookShelf
-                books={currentlyReading}
-                title="Currently Reading"
+                key={shelf.id}
+                shelf={shelf}
                 updateBookShelf={this.handleUpdateBookShelf}
               />
-            )}
-            {wantToRead && wantToRead.length > 0 && (
-              <BookShelf
-                books={wantToRead}
-                title="Want to Read"
-                updateBookShelf={this.handleUpdateBookShelf}
-              />
-            )}
-            {read && read.length > 0 && (
-              <BookShelf
-                books={read}
-                title="Read"
-                updateBookShelf={this.handleUpdateBookShelf}
-              />
-            )}
+            ))}
           </div>
         </div>
         <Link to="/search" className="open-search">
