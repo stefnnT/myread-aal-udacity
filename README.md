@@ -11,13 +11,18 @@ MyReads gives user access to various books in several categories. These books ca
 
 \*\*Feedbacks on ways to improve codebase or add features will be greatly appreciated
 
-## Using the app
+## Installing and Running the app
 
 To run this app on your local machine, follow instructions below:
+
 -- Fork the git repo
+
 -- Clone the forked repo to your local machine
+
 -- Change into app home directory
+
 -- On your terminal, run `npm install` to install dependencies
+
 -- Once dependencies are downloaded, run `npm start` to run the app in your browser
 
 If the application doesn't open a browser tab automatically, go to `localhost:3000` on your browser url bar
