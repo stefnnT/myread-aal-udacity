@@ -12,7 +12,6 @@ const Book = props => {
   if (!book.imageLinks) return null;
 
   return (
-    // <li>{JSON.stringify(book)}</li>
     <li>
       <div className="book">
         <div className="book-top">

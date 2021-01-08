@@ -10,6 +10,8 @@ const BookShelf = props => {
     updateBookShelf(book, shelf);
   };
 
+  if (!books.length) return null;
+
   return (
     <div className="bookshelf">
       <h2 className="bookshelf-title">{title}</h2>
