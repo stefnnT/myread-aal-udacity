@@ -6,7 +6,6 @@ import debounce from "./Debounce";
 import Spinner from "./Spinner";
 
 class Search extends Component {
-  // Remove error state; use toast to display error messages instead
   state = {
     books: [],
     query: "",
@@ -23,7 +22,6 @@ class Search extends Component {
 
   handleFormSubmit = e => {
     e.preventDefault();
-    // add toast for when form is submitted without a query string
 
     this.handleSearch();
   };
@@ -37,6 +35,7 @@ class Search extends Component {
     this.setState(() => ({ books: [], loading: true }));
 
     if (!query) {
+      this.setState(() => ({ books: [], loading: false }));
       return;
     }
     try {
@@ -45,7 +44,7 @@ class Search extends Component {
       if (books.error) {
         this.setState(() => ({
           books: [],
-          error: "invalid query string",
+          error: "Error: Invalid query string",
           loading: false
         }));
       } else {
