@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
 import debounce from "./Debounce";
+import Spinner from "./Spinner";
 
 class Search extends Component {
   // Remove error state; use toast to display error messages instead
@@ -59,7 +60,10 @@ class Search extends Component {
         this.setState(() => ({ error: null, loading: false }));
       }
     } catch (error) {
-      this.setState(() => ({ error: "Error connecting to API" }));
+      this.setState(() => ({
+        error: "Error connecting to API",
+        loading: false
+      }));
     }
   };
 
@@ -76,12 +80,16 @@ class Search extends Component {
         })
       }));
     } catch (error) {
-      this.setState(() => ({ error: "Error connecting to API" }));
+      this.setState(() => ({
+        error: "Error connecting to API",
+        loading: false
+      }));
     }
   };
 
   render() {
-    const { books, error } = this.state;
+    const { books, error, loading } = this.state;
+
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -111,20 +119,21 @@ class Search extends Component {
           </div>
         </div>
         <div className="search-books-results">
-          {error && (
-            <h2 style={{ color: "red", textAlign: "center" }}>
-              Error: {error}
-            </h2>
+          {loading ? (
+            <Spinner />
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            <ol className="books-grid">
+              {books.map(book => (
+                <Book
+                  key={book.id}
+                  book={book}
+                  handleShelfChange={this.handleShelfChange}
+                />
+              ))}
+            </ol>
           )}
-          <ol className="books-grid">
-            {books.map(book => (
-              <Book
-                key={book.id}
-                book={book}
-                handleShelfChange={this.handleShelfChange}
-              />
-            ))}
-          </ol>
         </div>
       </div>
     );

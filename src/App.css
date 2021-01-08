@@ -200,7 +200,8 @@ button:active {
 }
 
 .error-message {
-  text-align: "center";
+  text-align: center;
+  font-size: 1.5rem;
   margin-top: 2rem;
   color: #612;
 }
